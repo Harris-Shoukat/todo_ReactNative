@@ -1,12 +1,12 @@
 import {SafeAreaView, StatusBar, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import Hello from './src/component/Hello';
+import TodoPage from './src/components/TodoPage';
 
 const App = () => {
   return (
     <>
       <StatusBar barStyle={'dark-content'} />
-      <Hello />
+      <TodoPage />
     </>
   );
 };
