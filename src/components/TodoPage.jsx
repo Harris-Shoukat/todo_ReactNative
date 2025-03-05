@@ -2,6 +2,7 @@ import {
   Alert,
   FlatList,
   SafeAreaView,
+  StatusBar,
   StyleSheet,
   Text,
   TextInput,
@@ -10,6 +11,7 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import BackImg from './BackImg';
 // import {constant} from '../constants/constant';
 
 const TodoPage = () => {
@@ -17,10 +19,21 @@ const TodoPage = () => {
   const [todoList, setTodoList] = useState([]);
   const [editTodo, setEditTodo] = useState(null);
 
+  // console.log(todoList);
+
   const handleAddTodo = () => {
-    // Alert.alert("todo",'this is addd');
-    setTodoList([...todoList, {id: Date.now().toString(), title: todo}]);
-    setTodo('');
+
+    if (todoList.find(item => item.title === todo)) {
+      Alert.alert('warning', 'Item already exist');
+      return;
+    }
+
+    if (todo === '') {
+      Alert.alert('Alert', 'Input field is empty');
+    } else {
+      setTodoList([...todoList, {id: Date.now().toString(), title: todo}]);
+      setTodo('');
+    }
   };
 
   const handleDelete = id => {
@@ -29,8 +42,20 @@ const TodoPage = () => {
   };
 
   const handleEdit = item => {
-    setEditTodo(todo);
+    setEditTodo(item);
     setTodo(item.title);
+  };
+
+  const handleUpdateTodo = () => {
+    const update = todoList.map(item => {
+      if (item.id === editTodo.id) {
+        return {...item, title: todo};
+      }
+      return item;
+    });
+    setTodoList(update);
+    setEditTodo(null);
+    setTodo('');
   };
 
   const renderTodo = ({item}) => (
@@ -72,7 +97,8 @@ const TodoPage = () => {
 
   return (
     <>
-      <View style={{marginHorizontal: 16, flex: 1}}>
+    <StatusBar barStyle={'dark-content'}/>
+      <View style={{paddingHorizontal: 16, flex: 1, backgroundColor:'#2A3439'}}>
         <Text
           style={{
             fontSize: 20,
@@ -83,8 +109,9 @@ const TodoPage = () => {
           }}></Text>
         <TextInput
           style={{
+            color:'#FFE4E1',
             borderWidth: 2,
-            borderColor: '#1e90ff',
+            borderColor:'#FF7E6B',
             borderRadius: 6,
             paddingHorizontal: 16,
             fontSize: 18,
@@ -93,13 +120,14 @@ const TodoPage = () => {
           value={todo}
           onChangeText={val => setTodo(val)}
           placeholder="Add a todo"
+          placeholderTextColor={'#FFE4E1'}
         />
         {editTodo ? (
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={handleAddTodo}
+            onPress={handleUpdateTodo}
             style={{
-              backgroundColor: '#000',
+              backgroundColor: '#FF7E6B',
               borderRadius: 6,
               paddingVertical: 10,
               alignItems: 'center',
@@ -114,7 +142,7 @@ const TodoPage = () => {
             activeOpacity={0.7}
             onPress={handleAddTodo}
             style={{
-              backgroundColor: '#000',
+              backgroundColor: '#FF7E6B',
               borderRadius: 6,
               paddingVertical: 10,
               alignItems: 'center',
@@ -126,7 +154,11 @@ const TodoPage = () => {
           </TouchableOpacity>
         )}
 
-        <FlatList data={todoList} renderItem={renderTodo} />
+        {todoList.length <= 0 ? (
+          <BackImg />
+        ) : (
+          <FlatList data={todoList} renderItem={renderTodo} />
+        )}
       </View>
     </>
   );
