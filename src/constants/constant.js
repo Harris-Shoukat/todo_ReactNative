@@ -10,5 +10,5 @@ export const constant = [
   {
     id: '3',
     title: 'water plants',
-  },
+  },  
 ];
